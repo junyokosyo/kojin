@@ -1,3 +1,4 @@
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 // Rigidbody2Dコンポーネントが必須であることを示す
@@ -6,6 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour
 {
+    //Headerは見出し
     [Header("移動設定")]
     [SerializeField]
     private float moveSpeed = 5f; // 移動速度
@@ -13,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [Header("ジャンプ設定")]
     [SerializeField]
     private float jumpForce = 10f; // ジャンプ力
+    [SerializeField]
+    private float _dashForce = 10f;//ダッシュの力
     [SerializeField]
     private Transform groundCheck; // 接地判定の位置
     [SerializeField]
@@ -46,6 +50,14 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
+        //ダッシュ処理
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+
+        {
+            rb.velocity = new Vector2(rb.velocity.x,1);
+            rb.AddForce(Vector2.right* _dashForce, ForceMode2D.Impulse);
+        }
+
     }
 
     // 固定フレームレートで呼ばれる（物理演算用）
@@ -71,14 +83,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // キャラクターの向きを反転させるメソッド
+    // キャラクターの向きを反転させる
     private void Flip()
     {
         // 現在の向きを反転
         isFacingRight = !isFacingRight;
 
-        // TransformのlocalScaleのxを-1倍することで、画像が反転する
-        Vector3 scaler = transform.localScale;
+        Vector2 scaler = transform.localScale;
         scaler.x *= -1;
         transform.localScale = scaler;
     }
