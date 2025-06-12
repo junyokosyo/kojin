@@ -1,5 +1,6 @@
 using UnityEditor.Tilemaps;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 // Rigidbody2Dコンポーネントが必須であることを示す
 [RequireComponent(typeof(Rigidbody2D))]
@@ -16,21 +17,28 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float jumpForce = 10f; // ジャンプ力
     [SerializeField]
-    private float _dashForce = 10f;//ダッシュの力
-    [SerializeField]
     private Transform groundCheck; // 接地判定の位置
     [SerializeField]
     private float groundCheckRadius = 0.2f; // 接地判定の円の半径
     [SerializeField]
     private LayerMask groundLayer; // 「地面」とみなすレイヤー
 
+    // ダッシュ関連のパラメータ
+    [Header("ダッシュ設定")]
+    [SerializeField] private float dashSpeed = 20f;         // ダッシュの速度
+    [SerializeField] private float dashDuration = 0.2f;     // ダッシュの持続時間
+    [SerializeField] private float dashCooldown = 1f;       // ダッシュのクールダウンタイム
+
     // プライベート変数
     private Rigidbody2D rb;
     private float horizontalInput;
     private bool isGrounded;
     private bool isFacingRight = true;
+    private bool isDashing = false;     //ダッシュ中
+    private bool canDash = true;        // ダッシュ可能かどうかのフラグ
+    private Vector2 dashDirection;      //ダッシュの方向を保存
+    
 
-    // ゲーム開始時に一度だけ呼ばれる
     private void Awake()
     {
         // 必要なコンポーネントを取得して変数に格納
@@ -50,14 +58,11 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
-        //ダッシュ処理
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-
+        // ダッシュの入力受付
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
-            rb.velocity = new Vector2(rb.velocity.x,1);
-            rb.AddForce(Vector2.right* _dashForce, ForceMode2D.Impulse);
+             Dash();
         }
-
     }
 
     // 固定フレームレートで呼ばれる（物理演算用）
@@ -82,6 +87,16 @@ public class PlayerController : MonoBehaviour
             Flip();
         }
     }
+
+    private void Dash()
+    {
+        isDashing = true;
+        canDash = false; // ダッシュ中は再ダッシュ不可
+        
+        Debug.Log("ダッシュ開始！");
+    }
+    
+
 
     // キャラクターの向きを反転させる
     private void Flip()
