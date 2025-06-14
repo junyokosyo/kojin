@@ -1,6 +1,4 @@
-using UnityEditor.Tilemaps;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 // Rigidbody2Dコンポーネントが必須であることを示す
 [RequireComponent(typeof(Rigidbody2D))]
@@ -65,7 +63,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 固定フレームレートで呼ばれる（物理演算用）
+    
     private void FixedUpdate()
     {
         // --- 接地判定 ---
@@ -90,12 +88,19 @@ public class PlayerController : MonoBehaviour
 
     private void Dash()
     {
-        isDashing = true;
-        canDash = false; // ダッシュ中は再ダッシュ不可
-        
-        Debug.Log("ダッシュ開始！");
+        Vector2 a = transform.position;
+        Vector2 b = new Vector2(a.x+10, a.y+10);  
+
+        //isDashing = true;
+        //canDash = false; // ダッシュ中は再ダッシュ不可
+        Vector2.Lerp(a, b, dashSpeed);
+        //rb.velocity = Vector2.zero;
+        //rb.AddForce(Vector2.right* dashSpeed, ForceMode2D.Impulse);
+        Debug.Log("iruyo");
+
+
     }
-    
+
 
 
     // キャラクターの向きを反転させる
