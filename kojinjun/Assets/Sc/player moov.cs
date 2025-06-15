@@ -34,8 +34,9 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
     private bool isDashing = false;     //ダッシュ中
     private bool canDash = true;        // ダッシュ可能かどうかのフラグ
-    private Vector2 dashDirection;      //ダッシュの方向を保存
-    
+    private bool dashdirection=true;    //ダッシュの方向確認
+
+
 
     private void Awake()
     {
@@ -59,11 +60,12 @@ public class PlayerController : MonoBehaviour
         // ダッシュの入力受付
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
-             Dash();
+            Dash();
         }
+
     }
 
-    
+
     private void FixedUpdate()
     {
         // --- 接地判定 ---
@@ -73,6 +75,9 @@ public class PlayerController : MonoBehaviour
         // --- 左右移動 ---
         // X方向の速度を更新（Y方向の速度はそのまま維持する）
         rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+
+
+        
 
         // --- キャラクターの向きを反転 ---
         // 入力方向と現在の向きが違う場合にFlip()を呼び出す
@@ -84,22 +89,33 @@ public class PlayerController : MonoBehaviour
         {
             Flip();
         }
+
+
     }
 
     private void Dash()
     {
-        Vector2 a = transform.position;
-        Vector2 b = new Vector2(a.x+10, a.y+10);  
+        //Vector2 a = transform.position;
+        //Vector2 b = new Vector2(a.x+10,a.y);  
 
-        //isDashing = true;
-        //canDash = false; // ダッシュ中は再ダッシュ不可
-        Vector2.Lerp(a, b, dashSpeed);
-        //rb.velocity = Vector2.zero;
-        //rb.AddForce(Vector2.right* dashSpeed, ForceMode2D.Impulse);
-        Debug.Log("iruyo");
+
+        //transform.position = Vector2.Lerp(transform.position, b, dashSpeed);
+        //Vector2.Lerp(a, b, dashSpeed);
+        rb.velocity = Vector2.zero;
+        if (dashdirection)
+        {
+            rb.AddForce(Vector2.right * dashSpeed, ForceMode2D.Force);
+        }
+        else
+        {
+            rb.AddForce(Vector2.left * dashSpeed, ForceMode2D.Force);
+        }
+
+           
 
 
     }
+   
 
 
 
@@ -112,6 +128,14 @@ public class PlayerController : MonoBehaviour
         Vector2 scaler = transform.localScale;
         scaler.x *= -1;
         transform.localScale = scaler;
+        if (dashdirection)
+        {
+            dashdirection = false;
+        }
+        else
+        {
+            dashdirection= true;
+        }
     }
 
     // UnityエディタのSceneビューに、デバッグ用の円を描画する
