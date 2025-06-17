@@ -20,21 +20,24 @@ public class PlayerController : MonoBehaviour
     private float groundCheckRadius = 0.2f; // 接地判定の円の半径
     [SerializeField]
     private LayerMask groundLayer; // 「地面」とみなすレイヤー
+    [SerializeField]
+    private float _jumpcount = 1;  //ジャンプの回数 
 
     // ダッシュ関連のパラメータ
     [Header("ダッシュ設定")]
     [SerializeField] private float dashSpeed = 20f;         // ダッシュの速度
-    [SerializeField] private float dashDuration = 0.2f;     // ダッシュの持続時間
-    [SerializeField] private float dashCooldown = 1f;       // ダッシュのクールダウンタイム
-
+    [SerializeField] private float dashCooldown = 2f;       // ダッシュのクールダウンタイム
+    
     // プライベート変数
     private Rigidbody2D rb;
     private float horizontalInput;
+    private float _time = 2f;             //ダッシュのタイマー
     private bool isGrounded;
     private bool isFacingRight = true;
-    private bool isDashing = false;     //ダッシュ中
-    private bool canDash = true;        // ダッシュ可能かどうかのフラグ
-    private bool dashdirection=true;    //ダッシュの方向確認
+    //private bool isDashing = false;     //ダッシュ中
+    //private bool canDash = true;        // ダッシュ可能かどうかのフラグ
+    private bool dashdirection = true;    //ダッシュの方向確認
+    
 
 
 
@@ -51,17 +54,28 @@ public class PlayerController : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
         // ジャンプキーが押された瞬間、かつ地面にいる場合
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (_jumpcount > 0)
         {
-            // Y方向の速度をリセットしてから力を加えることで、安定したジャンプになる
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            if (Input.GetButtonDown("Jump"))
+            {
+
+                // Y方向の速度をリセットしてから力を加えることで、安定したジャンプになる
+                rb.velocity = new Vector2(rb.velocity.x, 0);
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                _jumpcount= _jumpcount - 1;
+            }
+        }
+        if (isGrounded)
+        {
+            _jumpcount = 1;
         }
         // ダッシュの入力受付
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _time > dashCooldown)
         {
             Dash();
+            _time = 0;
         }
+
 
     }
 
@@ -76,8 +90,10 @@ public class PlayerController : MonoBehaviour
         // X方向の速度を更新（Y方向の速度はそのまま維持する）
         rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
 
+        _time += Time.deltaTime;
 
-        
+
+
 
         // --- キャラクターの向きを反転 ---
         // 入力方向と現在の向きが違う場合にFlip()を呼び出す
@@ -89,6 +105,7 @@ public class PlayerController : MonoBehaviour
         {
             Flip();
         }
+        
 
 
     }
@@ -97,6 +114,7 @@ public class PlayerController : MonoBehaviour
     {
         //Vector2 a = transform.position;
         //Vector2 b = new Vector2(a.x+10,a.y);  
+        
 
 
         //transform.position = Vector2.Lerp(transform.position, b, dashSpeed);
