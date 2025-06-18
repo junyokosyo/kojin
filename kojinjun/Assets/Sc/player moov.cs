@@ -20,8 +20,6 @@ public class PlayerController : MonoBehaviour
     private float groundCheckRadius = 0.2f; // 接地判定の円の半径
     [SerializeField]
     private LayerMask groundLayer; // 「地面」とみなすレイヤー
-    [SerializeField]
-    private float _jumpcount = 1;  //ジャンプの回数 
 
     // ダッシュ関連のパラメータ
     [Header("ダッシュ設定")]
@@ -54,21 +52,16 @@ public class PlayerController : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
         // ジャンプキーが押された瞬間、かつ地面にいる場合
-        if (_jumpcount > 0)
-        {
-            if (Input.GetButtonDown("Jump"))
+
+            if (Input.GetButtonDown("Jump")&&isGrounded)
             {
 
                 // Y方向の速度をリセットしてから力を加えることで、安定したジャンプになる
                 rb.velocity = new Vector2(rb.velocity.x, 0);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                _jumpcount = _jumpcount - 1;
+                
             }
-        }
-        if (isGrounded)
-        {
-            _jumpcount = 1;
-        }
+
         // ダッシュの入力受付
         if (Input.GetKeyDown(KeyCode.LeftShift) && _time > dashCooldown)
         {
@@ -95,9 +88,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
             rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-
-        
-
 
         _time += Time.deltaTime;
 
