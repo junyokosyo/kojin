@@ -27,17 +27,17 @@ public class PlayerController : MonoBehaviour
     [Header("ダッシュ設定")]
     [SerializeField] private float dashSpeed = 20f;         // ダッシュの速度
     [SerializeField] private float dashCooldown = 2f;       // ダッシュのクールダウンタイム
-    
+
     // プライベート変数
     private Rigidbody2D rb;
     private float horizontalInput;
     private float _time = 2f;             //ダッシュのタイマー
     private bool isGrounded;
     private bool isFacingRight = true;
-    //private bool isDashing = false;     //ダッシュ中
+    private bool isDashing ;     //ダッシュ中
     //private bool canDash = true;        // ダッシュ可能かどうかのフラグ
     private bool dashdirection = true;    //ダッシュの方向確認
-    
+
 
 
 
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
                 // Y方向の速度をリセットしてから力を加えることで、安定したジャンプになる
                 rb.velocity = new Vector2(rb.velocity.x, 0);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                _jumpcount= _jumpcount - 1;
+                _jumpcount = _jumpcount - 1;
             }
         }
         if (isGrounded)
@@ -74,6 +74,7 @@ public class PlayerController : MonoBehaviour
         {
             Dash();
             _time = 0;
+            
         }
 
 
@@ -88,7 +89,15 @@ public class PlayerController : MonoBehaviour
 
         // --- 左右移動 ---
         // X方向の速度を更新（Y方向の速度はそのまま維持する）
-        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+        if (isDashing)
+        {
+            isDashing = false;
+            return;
+        }
+            rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+
+        
+
 
         _time += Time.deltaTime;
 
@@ -105,7 +114,7 @@ public class PlayerController : MonoBehaviour
         {
             Flip();
         }
-        
+
 
 
     }
@@ -114,46 +123,35 @@ public class PlayerController : MonoBehaviour
     {
         //Vector2 a = transform.position;
         //Vector2 b = new Vector2(a.x+10,a.y);  
-        
+
 
 
         //transform.position = Vector2.Lerp(transform.position, b, dashSpeed);
         //Vector2.Lerp(a, b, dashSpeed);
-        rb.velocity = Vector2.zero;
-        if (dashdirection)
+
+        isDashing = true;
+        if (isFacingRight)
         {
-            rb.AddForce(Vector2.right * dashSpeed, ForceMode2D.Force);
+            
+            rb.AddForce(Vector2.right * dashSpeed, ForceMode2D.Impulse);
+            
         }
         else
         {
-            rb.AddForce(Vector2.left * dashSpeed, ForceMode2D.Force);
+            
+            rb.AddForce(Vector2.left * dashSpeed, ForceMode2D.Impulse);
+            
         }
-
-           
-
-
     }
-   
-
-
-
     // キャラクターの向きを反転させる
     private void Flip()
     {
-        // 現在の向きを反転
+       
         isFacingRight = !isFacingRight;
 
         Vector2 scaler = transform.localScale;
         scaler.x *= -1;
         transform.localScale = scaler;
-        if (dashdirection)
-        {
-            dashdirection = false;
-        }
-        else
-        {
-            dashdirection= true;
-        }
     }
 
     // UnityエディタのSceneビューに、デバッグ用の円を描画する

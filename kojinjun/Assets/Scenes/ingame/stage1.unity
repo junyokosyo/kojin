@@ -1337,7 +1337,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _jumpcount: 2
-  dashSpeed: 5000
+  dashSpeed: 5
   dashCooldown: 1
 --- !u!1 &1784696604
 GameObject:
