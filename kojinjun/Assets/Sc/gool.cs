@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class gool : MonoBehaviour
 {
@@ -19,6 +20,6 @@ public class gool : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        SceneManager.LoadScene("Gameclear", LoadSceneMode.Single);
     }
 }
