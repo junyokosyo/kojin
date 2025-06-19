@@ -1,73 +1,75 @@
+ï»¿using System.Collections;
 using UnityEngine;
 
-// Rigidbody2DƒRƒ“ƒ|[ƒlƒ“ƒg‚ª•K{‚Å‚ ‚é‚±‚Æ‚ğ¦‚·
+// Rigidbody2Dã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒå¿…é ˆã§ã‚ã‚‹ã“ã¨ã‚’ç¤ºã™
 [RequireComponent(typeof(Rigidbody2D))]
-// Collider2DƒRƒ“ƒ|[ƒlƒ“ƒg‚ª•K{‚Å‚ ‚é‚±‚Æ‚ğ¦‚·
+// Collider2Dã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒå¿…é ˆã§ã‚ã‚‹ã“ã¨ã‚’ç¤ºã™
 [RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour
 {
-    //Header‚ÍŒ©o‚µ
-    [Header("ˆÚ“®İ’è")]
+    //Headerã¯è¦‹å‡ºã—
+    [Header("ç§»å‹•è¨­å®š")]
     [SerializeField]
-    private float moveSpeed = 5f; // ˆÚ“®‘¬“x
+    private float moveSpeed = 5f; // ç§»å‹•é€Ÿåº¦
 
-    [Header("ƒWƒƒƒ“ƒvİ’è")]
+    [Header("ã‚¸ãƒ£ãƒ³ãƒ—è¨­å®š")]
     [SerializeField]
-    private float jumpForce = 10f; // ƒWƒƒƒ“ƒv—Í
+    private float jumpForce = 10f; // ã‚¸ãƒ£ãƒ³ãƒ—åŠ›
     [SerializeField]
-    private Transform groundCheck; // Ú’n”»’è‚ÌˆÊ’u
+    private Transform groundCheck; // æ¥åœ°åˆ¤å®šã®ä½ç½®
     [SerializeField]
-    private float groundCheckRadius = 0.2f; // Ú’n”»’è‚Ì‰~‚Ì”¼Œa
+    private float groundCheckRadius = 0.2f; // æ¥åœ°åˆ¤å®šã®å††ã®åŠå¾„
     [SerializeField]
-    private LayerMask groundLayer; // u’n–Êv‚Æ‚İ‚È‚·ƒŒƒCƒ„[
+    private LayerMask groundLayer; // ã€Œåœ°é¢ã€ã¨ã¿ãªã™ãƒ¬ã‚¤ãƒ¤ãƒ¼
 
-    // ƒ_ƒbƒVƒ…ŠÖ˜A‚Ìƒpƒ‰ƒ[ƒ^
-    [Header("ƒ_ƒbƒVƒ…İ’è")]
-    [SerializeField] private float dashSpeed = 20f;         // ƒ_ƒbƒVƒ…‚Ì‘¬“x
-    [SerializeField] private float dashCooldown = 2f;       // ƒ_ƒbƒVƒ…‚ÌƒN[ƒ‹ƒ_ƒEƒ“ƒ^ƒCƒ€
-
-    // ƒvƒ‰ƒCƒx[ƒg•Ï”
+    // ãƒ€ãƒƒã‚·ãƒ¥é–¢é€£ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
+    [Header("ãƒ€ãƒƒã‚·ãƒ¥è¨­å®š")]
+    [SerializeField] private float dashSpeed = 20f;         // ãƒ€ãƒƒã‚·ãƒ¥ã®é€Ÿåº¦
+    [SerializeField] private float dashCooldown = 2f;       // ãƒ€ãƒƒã‚·ãƒ¥ã®ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³ã‚¿ã‚¤ãƒ 
+    [SerializeField] private float dashcol = 1f; //ãƒ€ãƒƒã‚·ãƒ¥ã‚³ãƒ«ãƒ¼ãƒãƒ³
+    
+    // ãƒ—ãƒ©ã‚¤ãƒ™ãƒ¼ãƒˆå¤‰æ•°
     private Rigidbody2D rb;
     private float horizontalInput;
-    private float _time = 2f;             //ƒ_ƒbƒVƒ…‚Ìƒ^ƒCƒ}[
+    private float _time = 2f;             //ãƒ€ãƒƒã‚·ãƒ¥ã®ã‚¿ã‚¤ãƒãƒ¼
     private bool isGrounded;
     private bool isFacingRight = true;
-    private bool isDashing ;     //ƒ_ƒbƒVƒ…’†
-    //private bool canDash = true;        // ƒ_ƒbƒVƒ…‰Â”\‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
-    private bool dashdirection = true;    //ƒ_ƒbƒVƒ…‚Ì•ûŒüŠm”F
+    private bool isDashing ;     //ãƒ€ãƒƒã‚·ãƒ¥ä¸­
+    //private bool canDash = true;        // ãƒ€ãƒƒã‚·ãƒ¥å¯èƒ½ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°
+    private bool dashdirection = true;    //ãƒ€ãƒƒã‚·ãƒ¥ã®æ–¹å‘ç¢ºèª
 
 
 
 
     private void Awake()
     {
-        // •K—v‚ÈƒRƒ“ƒ|[ƒlƒ“ƒg‚ğæ“¾‚µ‚Ä•Ï”‚ÉŠi”[
+        // å¿…è¦ãªã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å–å¾—ã—ã¦å¤‰æ•°ã«æ ¼ç´
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // ƒtƒŒ[ƒ€‚²‚Æ‚ÉŒÄ‚Î‚ê‚é
+    // ãƒ•ãƒ¬ãƒ¼ãƒ ã”ã¨ã«å‘¼ã°ã‚Œã‚‹
     private void Update()
     {
-        // ¶‰E‚ÌƒL[“ü—Í‚ğæ“¾ (-1:¶, 0:“ü—Í‚È‚µ, 1:‰E)
+        // å·¦å³ã®ã‚­ãƒ¼å…¥åŠ›ã‚’å–å¾— (-1:å·¦, 0:å…¥åŠ›ãªã—, 1:å³)
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
-        // ƒWƒƒƒ“ƒvƒL[‚ª‰Ÿ‚³‚ê‚½uŠÔA‚©‚Â’n–Ê‚É‚¢‚éê‡
+        // ã‚¸ãƒ£ãƒ³ãƒ—ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸç¬é–“ã€ã‹ã¤åœ°é¢ã«ã„ã‚‹å ´åˆ
 
             if (Input.GetButtonDown("Jump")&&isGrounded)
             {
 
-                // Y•ûŒü‚Ì‘¬“x‚ğƒŠƒZƒbƒg‚µ‚Ä‚©‚ç—Í‚ğ‰Á‚¦‚é‚±‚Æ‚ÅAˆÀ’è‚µ‚½ƒWƒƒƒ“ƒv‚É‚È‚é
+                // Yæ–¹å‘ã®é€Ÿåº¦ã‚’ãƒªã‚»ãƒƒãƒˆã—ã¦ã‹ã‚‰åŠ›ã‚’åŠ ãˆã‚‹ã“ã¨ã§ã€å®‰å®šã—ãŸã‚¸ãƒ£ãƒ³ãƒ—ã«ãªã‚‹
                 rb.velocity = new Vector2(rb.velocity.x, 0);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 
             }
 
-        // ƒ_ƒbƒVƒ…‚Ì“ü—Íó•t
+        // ãƒ€ãƒƒã‚·ãƒ¥ã®å…¥åŠ›å—ä»˜
         if (Input.GetKeyDown(KeyCode.LeftShift) && _time > dashCooldown)
         {
-            Dash();
+            StartCoroutine(Dash());
             _time = 0;
-            
+
         }
 
 
@@ -76,26 +78,24 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // --- Ú’n”»’è ---
-        // groundCheck‚ÌˆÊ’u‚ÉAw’è‚µ‚½”¼Œa‚Ì‰~‚ğì‚èA‚»‚Ì‰~‚ªgroundLayer‚ÉG‚ê‚Ä‚¢‚é‚©”»’è
+        // --- æ¥åœ°åˆ¤å®š ---
+        // groundCheckã®ä½ç½®ã«ã€æŒ‡å®šã—ãŸåŠå¾„ã®å††ã‚’ä½œã‚Šã€ãã®å††ãŒgroundLayerã«è§¦ã‚Œã¦ã„ã‚‹ã‹åˆ¤å®š
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        // --- ¶‰EˆÚ“® ---
-        // X•ûŒü‚Ì‘¬“x‚ğXViY•ûŒü‚Ì‘¬“x‚Í‚»‚Ì‚Ü‚ÜˆÛ‚·‚éj
-        if (isDashing)
+        // --- å·¦å³ç§»å‹• ---
+        // Xæ–¹å‘ã®é€Ÿåº¦ã‚’æ›´æ–°ï¼ˆYæ–¹å‘ã®é€Ÿåº¦ã¯ãã®ã¾ã¾ç¶­æŒã™ã‚‹ï¼‰
+        if (!isDashing)
         {
-            isDashing = false;
-            return;
-        }
             rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+        }
 
         _time += Time.deltaTime;
 
 
 
 
-        // --- ƒLƒƒƒ‰ƒNƒ^[‚ÌŒü‚«‚ğ”½“] ---
-        // “ü—Í•ûŒü‚ÆŒ»İ‚ÌŒü‚«‚ªˆá‚¤ê‡‚ÉFlip()‚ğŒÄ‚Ño‚·
+        // --- ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®å‘ãã‚’åè»¢ ---
+        // å…¥åŠ›æ–¹å‘ã¨ç¾åœ¨ã®å‘ããŒé•ã†å ´åˆã«Flip()ã‚’å‘¼ã³å‡ºã™
         if (horizontalInput > 0 && !isFacingRight)
         {
             Flip();
@@ -109,31 +109,22 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void Dash()
+    private IEnumerator Dash()
     {
-        //Vector2 a = transform.position;
-        //Vector2 b = new Vector2(a.x+10,a.y);  
-
-
-
-        //transform.position = Vector2.Lerp(transform.position, b, dashSpeed);
-        //Vector2.Lerp(a, b, dashSpeed);
-
         isDashing = true;
+
         if (isFacingRight)
         {
-            
             rb.AddForce(Vector2.right * dashSpeed, ForceMode2D.Impulse);
-            
         }
         else
         {
-            
             rb.AddForce(Vector2.left * dashSpeed, ForceMode2D.Impulse);
-            
         }
+        yield return new WaitForSeconds(dashcol);
+        isDashing = false;
     }
-    // ƒLƒƒƒ‰ƒNƒ^[‚ÌŒü‚«‚ğ”½“]‚³‚¹‚é
+    // ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®å‘ãã‚’åè»¢ã•ã›ã‚‹
     private void Flip()
     {
        
@@ -144,7 +135,7 @@ public class PlayerController : MonoBehaviour
         transform.localScale = scaler;
     }
 
-    // UnityƒGƒfƒBƒ^‚ÌSceneƒrƒ…[‚ÉAƒfƒoƒbƒO—p‚Ì‰~‚ğ•`‰æ‚·‚é
+    // Unityã‚¨ãƒ‡ã‚£ã‚¿ã®Sceneãƒ“ãƒ¥ãƒ¼ã«ã€ãƒ‡ãƒãƒƒã‚°ç”¨ã®å††ã‚’æç”»ã™ã‚‹
     private void OnDrawGizmosSelected()
     {
         if (groundCheck == null) return;
