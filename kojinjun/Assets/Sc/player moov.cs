@@ -3,7 +3,6 @@ using UnityEngine;
 
 // Rigidbody2Dコンポーネントが必須であることを示す
 [RequireComponent(typeof(Rigidbody2D))]
-// Collider2Dコンポーネントが必須であることを示す
 [RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour
 {
@@ -142,4 +141,5 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
+    
 }

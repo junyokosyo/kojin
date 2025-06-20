@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class stageselectScenes : MonoBehaviour
+public class SelectClick : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -16,10 +16,9 @@ public class stageselectScenes : MonoBehaviour
     {
 
     }
-    public void OnCollisionEnter2D(Collision2D collision)
+    
+    public void onClickstate()
     {
         SceneManager.LoadScene("select");
     }
-    
-
 }

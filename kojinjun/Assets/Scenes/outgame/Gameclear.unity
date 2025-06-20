@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 373865044}
   - component: {fileID: 373865043}
   - component: {fileID: 373865042}
-  - component: {fileID: 373865041}
+  - component: {fileID: 373865045}
   m_Layer: 5
   m_Name: select
   m_TagString: Untagged
@@ -254,18 +254,6 @@ RectTransform:
   m_AnchoredPosition: {x: 6, y: 126}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &373865041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 373865039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dcbba9489291814292b890b9520befa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &373865042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,8 +298,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 373865041}
-        m_TargetAssemblyTypeName: stageselectScenes, Assembly-CSharp
+      - m_Target: {fileID: 373865045}
+        m_TargetAssemblyTypeName: SelectClick, Assembly-CSharp
         m_MethodName: onClickstate
         m_Mode: 1
         m_Arguments:
@@ -360,6 +348,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 373865039}
   m_CullTransparentMesh: 1
+--- !u!114 &373865045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 373865039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 680f9ad5ded4e6048a6a3f8c25add3b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &836875957
 GameObject:
   m_ObjectHideFlags: 0
