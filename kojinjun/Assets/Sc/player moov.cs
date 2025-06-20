@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
     private bool isDashing ;     //ダッシュ中
     //private bool canDash = true;        // ダッシュ可能かどうかのフラグ
-    private bool dashdirection = true;    //ダッシュの方向確認
+   
 
 
 
