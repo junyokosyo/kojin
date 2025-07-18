@@ -8,8 +8,8 @@ public class stage2: MonoBehaviour
 
 
 
-    public void onClickstate()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        SceneManager.LoadScene("stage2");
+        SceneManager.LoadScene("stage2", LoadSceneMode.Single);
     }
 }

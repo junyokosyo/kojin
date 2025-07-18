@@ -16,8 +16,8 @@ public class SelectClick : MonoBehaviour
     {
 
     }
-    
-    public void onClickstate()
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         SceneManager.LoadScene("select");
     }

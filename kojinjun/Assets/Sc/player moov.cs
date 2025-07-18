@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEditor;
 using UnityEngine;
 
 // Rigidbody2Dコンポーネントが必須であることを示す
@@ -33,9 +34,16 @@ public class PlayerController : MonoBehaviour
     private float _time = 2f;             //ダッシュのタイマー
     private bool isGrounded;
     private bool isFacingRight = true;
-    private bool isDashing ;     //ダッシュ中
+    private bool isDashing;     //ダッシュ中
     //private bool canDash = true;        // ダッシュ可能かどうかのフラグ
-   
+
+    //アニメーション
+    private Animator _anime;
+    [Header("水素の音")]
+    //音
+    public AudioClip jumpSound;
+    public AudioClip dashSound;
+    private AudioSource audioSource;
 
 
 
@@ -44,6 +52,9 @@ public class PlayerController : MonoBehaviour
     {
         // 必要なコンポーネントを取得して変数に格納
         rb = GetComponent<Rigidbody2D>();
+        _anime = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
+            
     }
 
     // フレームごとに呼ばれる
@@ -51,27 +62,43 @@ public class PlayerController : MonoBehaviour
     {
         // 左右のキー入力を取得 (-1:左, 0:入力なし, 1:右)
         horizontalInput = Input.GetAxisRaw("Horizontal");
+        if (horizontalInput!=0)
+        {
+            Anime();
+        }
 
         // ジャンプキーが押された瞬間、かつ地面にいる場合
 
-            if (Input.GetButtonDown("Jump")&&isGrounded)
+        if (Input.GetButtonDown("Jump")&&isGrounded)
+        {
+            _anime.SetBool("jump", jumpForce != 0f);
+            
+            // Y方向の速度をリセットしてから力を加えることで、安定したジャンプになる
+            rb.velocity = new Vector2(rb.velocity.x, 0);
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            if (jumpSound)
             {
-
-                // Y方向の速度をリセットしてから力を加えることで、安定したジャンプになる
-                rb.velocity = new Vector2(rb.velocity.x, 0);
-                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                
+                audioSource.PlayOneShot(jumpSound);
             }
+            StartCoroutine(Jumpanim());
 
+
+        }
+ 
         // ダッシュの入力受付
         if (Input.GetKeyDown(KeyCode.LeftShift) && _time > dashCooldown)
         {
             StartCoroutine(Dash());
             _time = 0;
+            if (dashSound)
+            {
+                audioSource.PlayOneShot(dashSound);
+            }
 
         }
+        Anime();
 
-
+        
     }
 
 
@@ -81,7 +108,7 @@ public class PlayerController : MonoBehaviour
         // groundCheckの位置に、指定した半径の円を作り、その円がgroundLayerに触れているか判定
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        // --- 左右移動 ---
+        
         // X方向の速度を更新（Y方向の速度はそのまま維持する）
         if (!isDashing)
         {
@@ -103,13 +130,12 @@ public class PlayerController : MonoBehaviour
         {
             Flip();
         }
-
-
-
+       
     }
 
     private IEnumerator Dash()
     {
+        _anime.SetBool("DASH", dashcol != 0f);
         isDashing = true;
 
         if (isFacingRight)
@@ -120,8 +146,10 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector2.left * dashSpeed, ForceMode2D.Impulse);
         }
+        
         yield return new WaitForSeconds(dashcol);
         isDashing = false;
+        _anime.SetBool("DASH", false);
     }
     // キャラクターの向きを反転させる
     private void Flip()
@@ -141,5 +169,16 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
-    
+    private void Anime()
+    {
+        _anime.SetBool("walk", horizontalInput != 0f);
+    }
+    private IEnumerator Jumpanim()
+    {
+        Debug.Log(isGrounded);
+        yield return new WaitForSeconds(dashCooldown);
+        _anime.SetBool("jump", false);
+
+    }
+
 }

@@ -15,6 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/ingame/stage2.unity
     guid: 2c2b854a5f43d804a8a58df148e0ce7d
   - enabled: 1
+    path: Assets/Scenes/ingame/stage3.unity
+    guid: ef3c9dcc037a5c846aeb00e87bd398c2
+  - enabled: 1
+    path: Assets/Scenes/ingame/stage4.unity
+    guid: bb90f04f1cab06441a87fb63ae0d8ce4
+  - enabled: 1
     path: Assets/Scenes/outgame/select.unity
     guid: a32ba36d6c748564c804f9c6cae4d818
   - enabled: 1
@@ -23,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/outgame/Gameclear.unity
     guid: 862f20a31ca4a194cb9e2100590d2152
+  - enabled: 1
+    path: Assets/Scenes/outgame/result.unity
+    guid: 402969a1c00007c4a898e2ab145b2cd1
   m_configObjects: {}
